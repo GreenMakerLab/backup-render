@@ -55,7 +55,7 @@ jobs:
       - name: Enviar para o Google Drive
         run: |
           echo "Enviando backup para o Google Drive..."
-          rclone copy "$BACKUP_FILE.tar.gz" backupDrive:Backups --log-file=backup_log.txt --log-level DEBUG
+          rclone copy "$BACKUP_FILE.tar.gz" gdrive:Backups --log-file=backup_log.txt --log-level DEBUG
           cat backup_log.txt  # Exibe o log no console
           if [ $? -eq 0 ]; then
             echo "Backup enviado com sucesso!"
