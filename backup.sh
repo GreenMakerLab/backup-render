@@ -14,8 +14,7 @@ BACKUP_FILE="$BACKUP_DIR/backup_$DATA.dump"
 mkdir -p $BACKUP_DIR
 
 # Exportar o banco
-PGPASSWORD=$PG_PASSWORD pg_dump -h $PG_HOST -U $PG_USER -d $PG_DATABASE -Fc -f $BACKUP_FILE
-
+PGPASSWORD=$PG_PASSWORD pg_dump -Fc -h $PG_HOST -U $PG_USER -d $PG_DATABASE -f $BACKUP_FILE
 # Compactar o backup
 tar -czvf "$BACKUP_FILE.tar.gz" $BACKUP_FILE
 
