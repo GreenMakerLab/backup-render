@@ -32,7 +32,8 @@ jobs:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           echo "Tentando conectar ao banco de dados..."
-          pg_dump -Fc -h $PG_HOST -U $PG_USER -d $PG_DATABASE -f backup.dump
+          BACKUP_FILE="backup_$(date +'%Y-%m-%d_%H-%M-%S').dump"
+          pg_dump -Fc -h $PG_HOST -U $PG_USER -d $PG_DATABASE -f $BACKUP_FILE
 
           if [ $? -eq 0 ]; then
             echo "Conexão bem-sucedida!"
@@ -40,3 +41,31 @@ jobs:
             echo "Erro na conexão. Verifique host, usuário, senha e permissões."
             exit 1
           fi
+
+          echo "Compactando o backup..."
+          tar -czvf "$BACKUP_FILE.tar.gz" "$BACKUP_FILE"
+
+          if [ $? -eq 0 ]; then
+            echo "Backup compactado com sucesso!"
+          else
+            echo "Erro ao compactar o backup."
+            exit 1
+          fi
+
+      - name: Enviar para o Google Drive
+        run: |
+          echo "Enviando backup para o Google Drive..."
+          rclone copy "$BACKUP_FILE.tar.gz" backupDrive:Backups --log-file=backup_log.txt --log-level INFO
+          cat backup_log.txt  # Exibe o log no console
+
+          if [ $? -eq 0 ]; then
+            echo "Backup enviado com sucesso!"
+          else
+            echo "Erro ao enviar o backup para o Google Drive."
+            exit 1
+          fi
+
+      - name: Limpar arquivos locais
+        run: |
+          echo "Limpando arquivos locais..."
+          rm -rf "$BACKUP_FILE"*
