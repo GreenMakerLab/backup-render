@@ -57,7 +57,6 @@ jobs:
           echo "Enviando backup para o Google Drive..."
           rclone copy "$BACKUP_FILE.tar.gz" backupDrive:Backups --log-file=backup_log.txt --log-level DEBUG
           cat backup_log.txt  # Exibe o log no console
-
           if [ $? -eq 0 ]; then
             echo "Backup enviado com sucesso!"
           else
@@ -68,3 +67,15 @@ jobs:
         run: |
           echo "Limpando arquivos locais..."
           rm -rf "$BACKUP_FILE"*
+      - name: Testar Configuração do Rclone
+        run: |
+          echo "Testando configuração do Rclone..."
+          rclone lsd backupDrive: --log-file=rclone_test_log.txt --log-level DEBUG
+          cat rclone_test_log.txt  # Exibe o log no console
+
+          if [ $? -eq 0 ]; then
+            echo "Configuração do Rclone está correta!"
+          else
+            echo "Erro na configuração do Rclone. Verifique o arquivo rclone.conf."
+            exit 1
+          fi
