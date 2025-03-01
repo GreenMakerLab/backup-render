@@ -3,7 +3,7 @@ name: Backup PostgreSQL
 on:
   schedule:
     - cron: '0 0 * * 1'  # Toda segunda-feira às 00:00 UTC
-  workflow_dispatch:       # Permite executar manualmente
+  workflow_dispatch:       # Permite execução manual
 
 jobs:
   backup:
