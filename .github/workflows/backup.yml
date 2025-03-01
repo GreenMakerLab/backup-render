@@ -29,19 +29,14 @@ jobs:
           PG_HOST: dpg-cugf0can91rc73d68lmg-a.oregon-postgres.render.com
           PG_DATABASE: greenmakerlab
           PG_USER: greenmakerlab_user
-          PG_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # Nome do arquivo de backup
-          BACKUP_FILE="backup_$(date +'%Y-%m-%d_%H-%M-%S').dump"
-          
-          # Exportar o banco
-          pg_dump -Fc -h $PG_HOST -U $PG_USER -d $PG_DATABASE -f $BACKUP_FILE
+          echo "Tentando conectar ao banco de dados..."
+          pg_dump -Fc -h $PG_HOST -U $PG_USER -d $PG_DATABASE -f backup.dump
 
-          # Compactar
-          tar -czvf "$BACKUP_FILE.tar.gz" "$BACKUP_FILE"
-
-          # Enviar para o Google Drive
-          rclone copy "$BACKUP_FILE.tar.gz" gdrive:Backups
-
-          # Limpar arquivos locais
-          rm -rf "$BACKUP_FILE"*
+          if [ $? -eq 0 ]; then
+            echo "Conexão bem-sucedida!"
+          else
+            echo "Erro na conexão. Verifique host, usuário, senha e permissões."
+            exit 1
+          fi
