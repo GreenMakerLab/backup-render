@@ -1,10 +1,11 @@
 FROM ubuntu:latest
 
-# Atualizar repositórios e instalar dependências
+# Instalar dependências (incluindo unzip)
 RUN apt-get update && apt-get install -y \
     postgresql-client \
     curl \
     tar \
+    unzip \ 
     && rm -rf /var/lib/apt/lists/*
 
 # Instalar o Rclone
