@@ -1,11 +1,11 @@
 FROM ubuntu:latest
 
-# Atualizar repositórios e instalar dependências (incluindo unzip)
+# Instalar dependências
 RUN apt-get update && apt-get install -y \
     postgresql-client \
     curl \
     tar \
-    unzip \  
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Instalar o Rclone
@@ -20,5 +20,5 @@ COPY backup.sh /backup.sh
 # Dar permissão de execução
 RUN chmod +x /backup.sh
 
-# Comando para executar o backup
-CMD ["/backup.sh"]
+# Comando para manter o container ativo (sem abrir portas)
+CMD tail -f /dev/null
